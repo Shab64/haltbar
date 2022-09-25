@@ -1,0 +1,155 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Classes\ProductsHelper;
+use App\Models\Ralawise;
+use App\Models\RalawisePricing;
+use App\Models\Uneek;
+use App\Models\UneekPricing;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class ProductController extends Controller
+{
+    function filter_by(Request $request){
+        $WHERE_RALAWISE = '';
+        $WHERE_UNEEK = '';
+        $SIZE_RALAWISE = '';
+        $SIZE_UNEEK = '';
+        $CATEGORY_RALAWISE = '';
+        $CATEGORY_UNEEK = '';
+        $PRICE_RALAWISE = '';
+        $PRICE_UNEEK = '';
+        //checking if user asked for both the suppliers
+        if (empty($request->supplier) OR  count($request->supplier) ===2){
+            unset($request->supplier);
+            $request->supplier='both';
+        }
+        if (!empty($request->size)){
+            foreach ($request->size as $sizes){
+                $SIZE_RALAWISE.="SizeCode =". '"'.$sizes.'"'. ' OR ';
+                $SIZE_UNEEK.="Size =". '"'.$sizes.'"'. ' OR ';
+            }
+            $SIZE_RALAWISE = '('.substr($SIZE_RALAWISE,0,-4).')';
+            $SIZE_UNEEK = '('.substr($SIZE_UNEEK,0,-4).')';
+            $WHERE_RALAWISE.= $SIZE_RALAWISE;
+            $WHERE_UNEEK.= $SIZE_UNEEK;
+        }
+        if (!empty($request->category)){
+            foreach ($request->category as $cat){
+                $CATEGORY_RALAWISE.="PrimaryCategory =".'"'.$cat.'"'. ' OR ';
+                if ($cat === 'Polos'){
+                    $cat ='POLOSHIRT';
+                }elseif ($cat === 'SweatShirts'){
+                    $cat ='SWEATSHIRT';
+                }elseif ($cat === 'T-Shirts'){
+                    $cat ='TSHIRTS';
+                }elseif ($cat === 'Jackets'){
+                    $cat ='JACKETS';
+                }
+                $CATEGORY_UNEEK.="Category =".'"'.$cat.'"'. ' OR ';
+            }
+            $CATEGORY_RALAWISE='('.substr($CATEGORY_RALAWISE,0,-4).')';
+            $CATEGORY_UNEEK='('.substr($CATEGORY_UNEEK,0,-4).')';
+            $WHERE_RALAWISE.=$CATEGORY_RALAWISE;
+            $WHERE_UNEEK.=$CATEGORY_UNEEK;
+        }
+        if (!empty($request->price[0])){
+            foreach ($request->price[0] as $prices){
+                $PRICE_RALAWISE.=$prices. ' and ';
+                $PRICE_UNEEK.=$prices. ' and ';
+            }
+            $PRICE_RALAWISE='(SinglePrice BETWEEN '.substr($PRICE_RALAWISE,0,-5).')';
+            $PRICE_UNEEK='(Price_Single BETWEEN '.substr($PRICE_UNEEK,0,-5).')';
+            $WHERE_RALAWISE.=$PRICE_RALAWISE;
+            $WHERE_UNEEK.=$PRICE_UNEEK;
+        }
+        $WHERE_RALAWISE=str_replace(')(',') and (',$WHERE_RALAWISE);
+        $WHERE_UNEEK=str_replace(')(',') and (',$WHERE_UNEEK);
+
+
+        //if user does not select any supplier so default it will take data from both suppliers.
+        if (!empty($request->supplier) and $request->supplier[0] ==='ralawise'){
+            if (!empty($WHERE_RALAWISE)){
+                $SELECT = "SELECT `id`,`ProductGroup`,`PrimaryCategory`,`Brand`,`ProductName`,`type`,`PrimaryImage`,`SinglePrice`,`ColourImage` from `product2` where $WHERE_RALAWISE";
+            }else{
+                $SELECT = "SELECT `id`,`ProductGroup`,`PrimaryCategory`,`Brand`,`ProductName`,`type`,`PrimaryImage`,`SinglePrice`,`ColourImage` from `product2`";
+            }
+            $result = DB::select($SELECT);
+            $data['total_size'] = count($result);
+        }elseif (!empty($request->supplier) and  $request->supplier[0] ==='uneek'){
+            if (!empty($WHERE_UNEEK)){
+                $SELECT = "SELECT `id`,`Product_Code`,`Category`,`Model_Large_Image`,`Product_Name`,`type`,`Model_Small_Image`,`Price_Single` from `uneek` where $WHERE_UNEEK";
+            }else{
+                $SELECT = "SELECT `id`,`Product_Code`,`Category`,`Model_Large_Image`,`Product_Name`,`type`,`Model_Small_Image`,`Price_Single` from `uneek`";
+            }
+            $result = DB::select($SELECT);
+            $data['total_size'] = count($result);
+        }elseif (!empty($request->supplier) and  $request->supplier ==='both' and ( (!empty($request->category)) OR (!empty($request->size)) ) ){
+//            $uneekData = DB::select("SELECT `Product_Code`,`Model_Large_Image`,`Category`,`Product_Name`,`type`,`Model_Small_Image`,`Price_Single` from `uneek` where $WHERE_UNEEK");
+            $uneekData = DB::select("SELECT `Product_Code` from `uneek` where $WHERE_UNEEK GROUP BY Product_Code");
+            if (!empty($uneekData)){
+                foreach ($uneekData as $u){
+                    $uneek[] = DB::select("SELECT `Product_Code`,`Model_Large_Image`,`Category`,`Product_Name`,`type`,`Model_Small_Image`,`Price_Single` from `uneek` where where Product_Code ={$u['Product_Code']}");
+                }
+            }
+            var_dump($uneekData);die;
+            $ralawiseData = DB::select("SELECT `ProductGroup`,`PrimaryCategory`,`Brand`,`ProductName`,`type`,`PrimaryImage`,`SinglePrice`,`ColourImage` from `product2` where $WHERE_RALAWISE ");
+            $result = array_merge($ralawiseData,$uneekData);
+            $data['total_size'] = count($result);
+        }else{
+            $uneekData = Uneek::select('id','Product_Name','Model_Large_Image','type','Model_Small_Image','Price_Single')->distinct()->get()->toArray();
+            $ralawiseData = Ralawise::select('id','Brand','ProductName','type','PrimaryImage','SinglePrice','ColourImage')->distinct()->get()->toArray();
+            $result = array_merge($ralawiseData,$uneekData);
+
+            $uneek_total = Uneek::select('*')->get()->unique('Product_Code')->toArray();
+            $ralawise_total = Ralawise::select('*')->get()->unique('ProductGroup')->toArray();
+            $total_size = array_merge($ralawise_total,$uneek_total);
+            $data['total_size'] = count($total_size);
+        }
+
+        $products = ProductsHelper::shuffle_assoc($result);
+        $data['products'] = array_slice($products,0,21);
+        $data['ralawise_pricing'] = json_decode(RalawisePricing::get()->first(), true);
+        $data['ralawise_pricing_last'] = json_decode(RalawisePricing::get()->last(), true);
+        $data['uneek_pricing'] = json_decode(UneekPricing::get()->first(), true);
+        $data['uneek_pricing_last'] = json_decode(UneekPricing::get()->last(), true);
+        return json_encode($data);
+
+    }
+    function ProductsCategory($cat){
+        if ($cat === 'Polos'){
+            $uneek_cat ='POLOSHIRT';
+        }elseif ($cat === 'SweatShirts'){
+            $uneek_cat ='SWEATSHIRT';
+        }elseif ($cat === 'T-Shirts'){
+            $uneek_cat ='TSHIRTS';
+        }elseif ($cat === 'Jackets'){
+            $uneek_cat ='JACKETS';
+        }
+        $uneek_ByCodes=Uneek::select('Product_Code')->groupBY('Product_Code')->where('Category',$uneek_cat)->skip(0)->take(10)->get()->toArray();
+        if (!empty($uneek_ByCodes)){
+            foreach ($uneek_ByCodes as $code){
+                $uneek[] = Uneek::select('Product_Code','id','Product_Name','type','Model_Small_Image','Model_Large_Image','Price_Single')->where('Product_Code',$code['Product_Code'])->first()->toArray();
+            }
+        }
+
+        $ralawise_ByCodes=Ralawise::select('ProductGroup')->groupBY('ProductGroup')->where('PrimaryCategory',$cat)->skip(0)->take(11)->get()->toArray();
+        if (!empty($ralawise_ByCodes)){
+            foreach ($ralawise_ByCodes as $code2){
+                $ralawise[] = Ralawise::select('ProductGroup','id','Brand','ProductName','type','PrimaryImage','SinglePrice','ColourImage')->where('ProductGroup',$code2['ProductGroup'])->first()->toArray();
+
+            }
+        }
+        $get_products = array_merge($ralawise, $uneek);
+        $data['products'] = ProductsHelper::shuffle_assoc($get_products);
+        //total Size to break into
+        $data['total_size'] = count($get_products);
+        $data['ralawise_pricing'] = json_decode(RalawisePricing::get()->first(), true);
+        $data['ralawise_pricing_last'] = json_decode(RalawisePricing::get()->last(), true);
+        $data['uneek_pricing'] = json_decode(UneekPricing::get()->first(), true);
+        $data['uneek_pricing_last'] = json_decode(UneekPricing::get()->last(), true);
+        return view('web.products_by_category', $data);
+    }
+}

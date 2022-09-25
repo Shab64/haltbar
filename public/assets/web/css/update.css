@@ -1,0 +1,120 @@
+.ec-header-bottom{
+    background-color: #000 !important;
+}
+
+
+.header_svg{
+    fill: #EE8013 !important;
+}
+
+
+.ec-main-menu ul li:hover > a {
+    color: #EE8013 !important;
+}
+
+.ec-main-menu > ul > li:hover > a:before{
+    background-color: #EE8013 !important;
+}
+
+.btn-primary{
+    background-color: #EE8013 !important;
+}
+
+.btn-secondary{
+    background-color: #EE8013 !important;
+}
+
+
+.main-slider-nav .swiper-buttons .swiper-button-next, .main-slider-nav .swiper-buttons .swiper-button-prev{
+    background-color: #000 !important;
+}
+
+.ec-category-section .ec-cat-tab-nav .cat-link.active, .banner-block .banner-content .ec-banner-btn a, .ec-slide-content .ec-slide-title:before,
+.ec-category-section .ec-cat-tab-nav .cat-link:hover
+{
+    background-color: #EE8013 !important;
+}
+
+.header-top {
+    background-color: #EE8013 !important;
+    border: 0 !important
+}
+
+.header-top-social ul li a{
+    background-color: #000;
+    color: #fff;
+    border: 0 !important
+}
+
+.header-top-message,
+.header-top-message span{
+    color: #fff  !important;
+}
+
+.header-top-lan-curr .dropdown .dropdown-toggle,
+.header-top-lan-curr .dropdown .dropdown-toggle i {
+    color: #fff;
+}
+
+
+.ec-offer-content .ec-offer-title,
+.ec-offer-content .ec-offer-stitle{
+    color: #000;
+}
+
+
+.ec-main-menu ul li.active > a {
+    color: #EE8013 !important;
+}
+.ec-main-menu > ul > li.active > a:before {
+    background: #EE8013;
+    width: 100%;
+}
+
+.ec-sidebar-heading h1, .ec-sidebar-heading .h1{
+    background-color: #EE8013;
+    color: #fff;
+}
+
+
+.ec-shop-rightside .ec-pro-list-top {
+    background-color: #EE8013;
+}
+
+.ec-sort-select .sort-by {
+    color: #fff;
+}
+
+.ec-gl-btn .btn.active, .ec-gl-btn .btn:hover{
+    background-color: #000;
+    border-color: transparent;
+}
+
+.ec-sidebar-wrap .ec-sidebar-block .ec-sb-block-content li .ec-sidebar-block-item .checked:after{
+    background-color: #000 !important;
+    border-color: transparent;
+}
+
+
+.ec-cart-content .table-content table thead > tr {
+    background-color: #ee8013;
+    border: 1px solid #ebebeb;
+}
+
+.ec-cart-content .table-content table thead > tr > th{
+    color: #fff;
+}
+
+.ec-breadcrumb-list li.active, .ec-breadcrumb .ec-breadcrumb-title {
+    color: #ee8013;
+    font-weight: bold;
+}
+
+.ec-breadcrumb-list .ec-breadcrumb-item.active::before{
+    color: #000
+}
+
+.ec-single-pro-tab-nav .nav-tabs .nav-link.active{
+    background-color: #EE8013;
+    border-color: transparent;
+}

@@ -1,0 +1,35 @@
+.pc-sidebar .m-header {
+   height: auto;
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    background: #000000;
+    justify-content: center;
+}
+
+
+.pc-sidebar{
+    background-color: #000;
+}
+
+.m-header .b-brand{
+    width: 120px;
+}
+
+.pc-sidebar .pc-navbar > .pc-item.active > .pc-link, .pc-sidebar .pc-navbar > .pc-item:focus > .pc-link, .pc-sidebar .pc-navbar > .pc-item:hover > .pc-link {
+    background: #e97d13;
+}
+
+
+.bg-primary {
+    background-color: #e97d13 !important;
+}
+
+.text-primary{
+    color: #e97d13 !important;
+}
+
+.btn-primary{
+    background-color: #e97d13 !important;
+    border-color: transparent;
+}
