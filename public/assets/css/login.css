@@ -23459,11 +23459,11 @@ button:focus {
     color: var(--primary-hover); }
 
 .btn-outline-primary {
-    color: #11D5FF;
-    border-color: #11D5FF; }
+    color: #6e6e6e;
+    border-color: #6e6e6e; }
 .btn-outline-primary:hover {
-    border-color: #11D5FF;
-    background-color: #11D5FF }
+    border-color: #6e6e6e;
+    background-color: #6e6e6e }
 
 .sharp {
     min-width: 2.5rem;

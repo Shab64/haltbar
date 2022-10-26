@@ -1,5 +1,5 @@
 @include('web.header')
-
+<?php //use Illuminate\Support\Facades\Session;$sub_total = 0; session::forget('cart','010M-XXL-Classic Red') ?>
 <link rel="stylesheet" href="{{ asset('public/assets/fahad/style.css')}}" />
 <link rel="stylesheet" href="{{ asset('public/assets/jquery-steps/examples/css/style.css')}}">
 <link rel="stylesheet" href="{{ asset('public/assets/jquery-steps/dist/jquery-steps.css')}}">
@@ -67,7 +67,7 @@
     }
 
     .active22 {
-        border: 2px solid #666;
+        border: 2px solid #EE8013;
     }
 
     .chooseartwork {
@@ -353,6 +353,12 @@
     .image-checkbox input[type="checkbox"] {
         display: none;
     }
+    .disabled_image-checkbox input[type="checkbox"] {
+        display: none;
+    }
+    .disabled_image-checkbox{
+        opacity: .5;
+    }
 
     .image-checkbox-checked {
         border-color: #EE8013;
@@ -435,6 +441,66 @@
         top: 62%;
         right: 25px;
     }
+
+    .accordion-button:not(.collapsed) {
+        color: #0c63e4;
+        background-color: #e7f1ff;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+
+    #accordionExample .accordion-header input[type="radio"] {
+
+        width: 100%;
+        height: auto;
+        appearance: none;
+        outline: none;
+        cursor: pointer;
+        border-radius: 2px;
+        padding: 15px 20px;
+        font-weight: 500;
+        background: white;
+        font-size: 22px;
+        transition: all 100ms linear;
+    }
+
+    .radio5 input[type="radio"] {
+        width: 100%;
+        height: auto;
+        appearance: none;
+        outline: none;
+        cursor: pointer;
+        line-height: 0;
+        border-radius: 2px;
+        font-weight: 500;
+        background: white;
+        font-size: 22px;
+        transition: all 100ms linear;
+    }
+
+    .radio5 input[type="radio"]:before {
+        content: attr(label);
+        display: inline-block;
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+
+    #activat .accordion-button::after{
+        background-image: none;
+    }
+    #accordionExample .accordion-header input[type="radio"]:before {
+        content: attr(label);
+        display: inline-block;
+        color: #000;
+    }
+
+    .accordion-item {
+        background-color: #fff;
+        border: none;
+    }
 </style>
 
 <div class="sticky-header-next-sec  ec-breadcrumb section-space-mb">
@@ -463,19 +529,14 @@
     <div class="container">
         <div class="row">
             <div class="ec-cart-leftside  col-lg-8 col-md-12 ">
-                <?php $sub_total = 0 ?>
-                <?php $vat = 0 ?>
-                <?php $total = 0 ?>
-
+                <?php $sub_total = 0;$inc =0; $vat = 0;$total = 0; $total_product_cost=0;$total_to_add_logo=0;$used_positions=[];?>
                 @if (session('cart'))
                 @foreach (session('cart') as $k=>$product)
+                <?php  $used_positions[$k] = [];   $total_product_cost+=$product['item_total']; $inc++; ?>
 
                 <div class="card">
                     <div class="card-body">
                         <div class="product row">
-
-
-
                             <div class="product-image col-md-2">
                                 <img src="{{ $product['image'] }}">
                             </div>
@@ -508,22 +569,37 @@
                             </div>
                         </div>
                     </div>
+                    <?php $total_for_each_customization = 0; ?>
+                    @if(!empty($product['customization']))
+                        @foreach($product['customization'] as $c)
 
-                    <div class="card-body">
-                        <h6>Logos applied to this item</h6>
+                            <div class="card-body">
+                        <p>{{ucfirst($c['cus_type'])}} applied to this item</p>
                         <div class="product row pt-3">
                             <div class=" col-md-2 d-flex align-items-center">
                                 <div class="ec-cart-pro-remove">
                                     <span><i class="ecicon eci-trash-o"></i></span>
                                 </div>
-                                <div class="product-image">
-                                    <img src="assets/images/product-image/9_2.jpg">
-                                </div>
+                                @if($c['cus_type'] === 'Logo' and $c['is_logo'] === 'yes')
+                                    <div class="product-image">
+                                        <img src="{{(!empty($c['my_logo']) ? url('customization_images/'.$c['my_logo']) : "https://www.workwearexpress.com/dist/placeholder.142a17c58fac006abb2e3864aed1dfbf.jpg")}}" width=40">
+                                    </div>
+                                @elseif($c['cus_type'] === 'Logo' and $c['is_logo'] === 'no')
+                                    <div class="product-image">
+                                        <img src="https://www.workwearexpress.com/dist/placeholder.142a17c58fac006abb2e3864aed1dfbf.jpg" width=40">
+                                    </div>
+                                @else
+                                    <div class="product-image">
+                                        <b>T</b>
+                                    </div>
+                                @endif
+
                             </div>
                             <div class="product-details col-md-8 d-flex align-items-center">
                                 <div class="product-title">
-                                    <span>Embroidered Logo</span>
-                                    <p>Left Breast, Right Breast, Centre of Chest</p>
+                                    <span>{{ucfirst($c['layout'][0])}}  {{ucfirst($c['cus_type']) }} {{($c['cus_type'] === 'Logo' and $c['is_logo'] === 'no') ? ": We'll contact you" : ""}} </span>
+                                    <script>var jow =2</script>
+                                    <p>@foreach($c['position'] as $pos) <?php $total_for_each_customization+=5.5;  array_push($used_positions[$k],$pos) ?> <b>{{ucfirst($pos) }}</b>  @endforeach</p>
                                 </div>
                             </div>
                             <div class="product-line-price col-md-2 d-flex align-items-center justify-content-end">
@@ -531,10 +607,11 @@
                             </div>
                         </div>
                     </div>
-
+                        @endforeach
+                    @endif
                     <div class="row">
                         <div class="col-md-5 ml-5  mb-3">
-                            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add another logo to this item</button>
+                            <button class="btn btn-primary add_customization_modal" id="add_customization_modal"  type="button" data-sessionKey="{{$k}}">Add another logo to this item</button>
                         </div>
                         <div class="col-md-6 d-flex justify-content-end ">
 
@@ -543,19 +620,15 @@
                                     <div class="ec-cart-summary">
                                         <div>
                                             <span class="text-left">Customisation cost: </span>
-                                            <span class="text-right" style="margin-left: 15px;">£33.00 </span>
+                                            <span class="text-right" style="margin-left: 15px;">£{{$total_for_each_customization}}  </span>
+                                            <?php $total_to_add_logo+= $total_for_each_customization; ?>
                                         </div>
                                         <div>
                                             <span class="text-left">Total item cost: </span>
-                                            <span class="text-right"><a class="ec-cart-coupan" style="margin-left: 15px;">£44.96 </a></span>
+                                            <span class="text-right"><a class="ec-cart-coupan" style="margin-left: 15px;">£{{ $total_for_each_customization+$product['item_total']}} </a></span>
+                                            <?php  $total+=$total_for_each_customization+$product['item_total']; ?>
                                         </div>
 
-                                        <!-- <div class="ec-cart-coupan-content">
-                                                        <form class="ec-cart-coupan-form" name="ec-cart-coupan-form" method="post" action="#">
-                                                            <input class="ec-coupan" type="text" required="" placeholder="Enter Your Coupan Code" name="ec-coupan" value="">
-                                                            <button class="ec-coupan-btn button btn-primary" type="submit" name="subscribe" value="">Apply</button>
-                                                        </form>
-                                                    </div> -->
                                     </div>
 
                                 </div>
@@ -564,6 +637,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 @endforeach
                 @else
@@ -582,12 +656,6 @@
                                                 <span class="text-right" style="margin-left: 15px;">£8.95</span>
                                             </div>
 
-                                            <!-- <div class="ec-cart-coupan-content">
-                                                        <form class="ec-cart-coupan-form" name="ec-cart-coupan-form" method="post" action="#">
-                                                            <input class="ec-coupan" type="text" required="" placeholder="Enter Your Coupan Code" name="ec-coupan" value="">
-                                                            <button class="ec-coupan-btn button btn-primary" type="submit" name="subscribe" value="">Apply</button>
-                                                        </form>
-                                                    </div> -->
                                         </div>
 
                                     </div>
@@ -632,27 +700,27 @@
                                 <div class="ec-cart-summary">
                                     <div>
                                         <span class="text-left">Product Costs </span>
-                                        <span class="text-right">£11.96 </span>
+                                        <span class="text-right">£{{$total_product_cost}} </span>
                                     </div>
                                     <div>
                                         <span class="text-left">Costs To Add Logo </span>
-                                        <span class="text-right">£33.00 </span>
+                                        <span class="text-right">£{{$total_to_add_logo}} </span>
                                     </div>
                                     <div>
                                         <span class="text-left">One Time Setup Fees</span>
-                                        <span class="text-right">£8.95 </span>
+                                        <span class="text-right">£10 </span>
                                     </div>
                                     <div>
                                         <span class="text-left">Total (ex. VAT)</span>
-                                        <span class="text-right">£53.91</span>
+                                        <span class="text-right">£{{$total}}</span>
                                     </div>
                                     <div class="ec-cart-summary-total">
                                         <span class="text-left">VAT </span>
-                                        <span class="text-right">£10.78 </span>
+                                        <span class="text-right">£{{($total/100)*20}} </span>
                                     </div>
                                     <div>
                                         <span class="text-left">Your total (inc. VAT)</span>
-                                        <span class="text-right"><a class="ec-cart-coupan">£64.69 </a></span>
+                                        <span class="text-right"><a class="ec-cart-coupan">£{{$total+($total/100)*20}} </a></span>
                                     </div>
                                     <div>
                                         <span class="text-left"><b>Loved by over 600,000 businesses in the UK, just like yours</b></span>
@@ -679,204 +747,7 @@
     </div>
 </section>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-{{--                <h5 class="modal-title" id="exampleModalLabel"></h5>--}}
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="step-app" id="demo">
-                    <ul class="step-steps">
-                        <li data-step-target="step1">1. Position</li>
-                        <li data-step-target="step2">2. Application</li>
-                        <li data-step-target="step3">3. Choose Artwork</li>
-                        <li data-step-target="step4">4. Type</li>
-                        <li data-step-target="step5">5. Edit Artwork</li>
-                    </ul>
-                    <div class="step-content pt-3">
-                        <div class="step-tab-panel" data-step="step1">
-                            <div class="container">
-                                <div class="row" id="activate">
-                                    <div class="container">
-                                        <div class="row" id="activate">
-                                            @php $print = ['leftchest','centerchest','insideneck','largebackA3','largebackA4','largefrontA3','largefrontA4','leftsleeves','leftthigh','cap','mask','napeofneck','rightchest','rightsleeves','rightthigh','specifynotes'] @endphp
-                                            @foreach($print as $p)
-                                                <div class="col-lg-4 mt-3 ">
-                                                    <div class="card step-card currrent image-checkbox">
-                                                        <div class="step-img">
-                                                            <a>
-                                                                <img src="{{ asset('public/assets/fahad/images/'.$p.'.png') }}">
-                                                                <input type="checkbox" name="image[]" value=""/>
-                                                                <i class="fa fa-check hidden"></i>
-                                                            </a>
-                                                        </div>
-                                                        <div class="labels">
-                                                            <p><i class="ecicon eci-print pr-2"></i>Print Available</p>
-                                                            <p><i class="ecicon eci-pencil pr-2"></i>Embroidery Available</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
 
-                            </div>
-                        </div>
-                        <div class="step-tab-panel pt-2" data-step="step2" >
-                            <div class="container" id="activate5">
-                                    <div class="card step-card  ">
-                                        <div class="col-lg-12 currrent5 active25">
-                                            <div class="row">
-                                                <label class="col-md-6 radio-img" style="margin-bottom: 0;">
-                                                    <input type="radio" name="layout" value="L" />
-                                                    <div class="radio_image" style="background-image: url(https://www.workwearexpress.com/dist/newEmbroidery.8464d3853cc83a58deb67344d79a7a1b.png); width: 100%;"></div>
-                                                </label>
-                                                <div class="col-md-6 p-3">
-                                                    <span><b>Embroidery</b>(Stitching)</span>
-                                                    <p>Embroidery (or stitching) is detailed and durable which is better suited to uniforms.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card step-card mt-4 ">
-                                        <div class="col-lg-12 currrent5">
-                                            <div class="row">
-                                                <label class="col-md-6 radio-img" style="margin-bottom: 0;">
-                                                    <input type="radio" name="layout" value="S" />
-                                                    <div class="radio_image" style="background-image: url(https://www.workwearexpress.com/dist/newPrint.f80e277580b052b2dc896165e4c74ffb.png); width: 100%;"></div>
-                                                </label>
-                                                <div class="col-md-6 pt-3">
-                                                    <span><b>Print</b></span>
-                                                    <p>The print application method is both vivid and flexible, ideal for general use.</p>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>
-                        <div class="step-tab-panel" data-step="step3">
-                            <div class="col-lg-12 mb-5">
-                                <div class="chooseartwork mb-5">
-                                    <div class="d-flex justify-content-center">
-                                        <div class="choose-content step-footer">
-                                            <button data-step-action="next" class="step-btn btn btn-primary">Add New Logo</button>
-                                        </div>
-                                    </div>
-                                    <h6 style="color: #000;"><b style="color: #3cb371;">£8.95</b> one-time new logo setup cost</h6>
-                                    <p>This cost includes the full digitisation of your logo. Don't worry how it looks when it's uploaded, we will send a proof before we begin production!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="step-tab-panel" data-step="step4">
-                            <div class="container">
-                                <div class="radio" id="activates">
-                                    <input type="radio" class="currrent1 active21" label="Logo" value="Logo" name="artwork_type">
-                                    <img src="{{ asset('public/assets/gallery.png') }}" alt="logo" class="logo-img">
-
-                                    <input type="radio" class="currrent1" label="Text" name="artwork_type" value="Text" style="margin-top: 20px;">
-                                    <img src="{{ asset('public/assets/text.png') }}" alt="text" class="text-img">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="step-tab-panel" data-step="step5">
-                            <div id="activat">
-                                <form >
-
-                                    <div class="input-images" id="input-file-now" style="width: 100%"></div>
-
-                                </form>
-                                <div class="mt-3 mb-3 text-center ">
-                                    <span><b>alternatively...</b></span>
-                                </div>
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="card step-card col-lg-12 p-4 text-center currrent2">
-                                            <p>Don't have your logo to hand? Don't worry, select here and we will contact after you place your order.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <form class="mt-3">
-                                        <label><b>Notes</b></label>
-                                        <textarea id="w3review" name="w3review" rows="4" cols="50" class="card step-card" placeholder="Please let us know if you have any special requirements"></textarea>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- Text -->
-                            <div id="if_text">
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="exampleInputEmail1" class="form-label mt-2">Text 1</label>
-                                        <input name="text_one" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                                        <label for="exampleInputEmail1" class="form-label mt-2">Text 2 (OPTIONAL)</label>
-                                        <input name="text_two" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                                        <label for="exampleInputEmail1" class="form-label mt-2">Text 3 (OPTIONAL)</label>
-                                        <input name="text_three" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                                    </div>
-                                </form>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <select class="form-select" id="fontFamilySelect" name="fonts">
-                                            <option value="">Select</option>
-                                            <option disabled style="font-weight: bold; background-color: #EEEEEE">Serif Fonts</option>
-                                            <option value="Georgia,serif" style="font-family: Georgia,serif">Georgia</option>
-                                            <option value="Palatino Linotype,Book Antiqua,Palatino,serif" style="font-family: Palatino Linotype,Book Antiqua,Palatino,serif">Palatino Linotype</option>
-                                            <option value="Times New Roman,Times,serif" style="font-family: Times New Roman,Times,serif">Times New Roman</option>
-                                            <option disabled style="font-weight: bold; background-color: #EEEEEE">Sans-Serif Fonts</option>
-                                            <option value="Arial,Helvetica,sans-serif" style="font-family: Arial,Helvetica,sans-serif">Arial</option>
-                                            <option value="Arial Black,Gadget,sans-serif" style="font-family: Arial Black,Gadget,sans-serif">Arial Black</option>
-                                            <option value="Comic Sans MS,cursive,sans-serif" style="font-family: Comic Sans MS,cursive,sans-serif">Comic Sans MS</option>
-                                            <option value="Impact,Charcoal,sans-serif" style="font-family: Impact,Charcoal,sans-serif">Impact</option>
-                                            <option value="Lucida Sans Unicode,Lucida Grande,sans-serif" style="font-family: Lucida Sans Unicode,Lucida Grande,sans-serif">Lucida Sans Unicode</option>
-                                            <option selected="selected" value="Tahoma,Geneva,sans-serif" style="font-family: Tahoma,Geneva,sans-serif">Tahoma</option>
-                                            <option value="Trebuchet MS,Helvetica,sans-serif" style="font-family: Trebuchet MS,Helvetica,sans-serif">Trebuchet MS</option>
-                                            <option value="Verdana,Geneva,sans-serif" style="font-family: Verdana,Geneva,sans-serif">Verdana</option>
-                                            <option disabled style="font-weight: bold; background-color: #EEEEEE">Monospace Fonts</option>
-                                            <option value="Courier New,Courier,monospace" style="font-family: Courier New,Courier,monospace">Courier New</option>
-                                            <option value="Lucida Console,Monaco,monospace" style="font-family: Lucida Console,Monaco,monospace">Lucida Console</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="color" name="colours" class="form-control-color" id="exampleColorInput" value="#563d7c" title="Choose your color">
-
-                                    </div>
-                                </div>
-                                <h6 class="mt-3" style="font-weight: 800;">Text Preview:</h6>
-                                <div class="mb-4" id="ctm_textpreview">
-                                    <p class="one">One</p>
-                                    <p class="two">Two</p>
-                                    <p class="three">Three</p>
-                                </div>
-
-                                <form class="mt-3">
-                                    <label><b>Notes</b></label>
-                                    <textarea id="w3review" name="w3review" rows="4" cols="50" class="card step-card" placeholder="Please let us know if you have any special requirements"></textarea>
-                                </form>
-
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="step-footer">
-                        <button data-step-action="prev" class="step-btn btn">Back</button>
-                        <button data-step-action="next" class="step-btn btn btn-primary">Next</button>
-                        <button data-step-action="finish" class="step-btn btn btn-primary">Confirm</button>
-                    </div>
-                </div>
-            </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div> -->
-        </div>
-    </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <script src="{{ asset('public/assets/jquery-steps/dist/jquery-steps.js')}}"></script>
@@ -886,135 +757,159 @@
 
 
 <script>
-    $('#demo').steps({
-        headerTag: "h2",
-        bodyTag: "section",
-        transitionEffect: "slideLeft",
-        pointerEvents:"hide",
-        onChange: function (event, currentIndex, newIndex){
-            if(currentIndex==4){
-                let artwork_type = $("[name='artwork_type']:checked").val()
-                if (artwork_type === 'Logo'){
-                    $("#if_text").css('display','none')
-                }else{
-                    $("#activat").css('display','none')
+    $(".add_customization_modal").on("click", function (e) {
+        let sessionKey = $(this).attr('data-sessionKey');
+        let _token ='{{csrf_token()}}';
+        let used_postions = '<?php echo json_encode($used_positions); ?>'
+        $.post("{{route('user.showCustomization')}}",{_token,sessionKey,used_postions},function (e){
+            console.log(e)
+            $(e).modal('show')
+        })
+        setTimeout(function (e) {
+            // $('.input-images').imageUploader({
+            //     extensions: ['.ai'],
+            //     imagesInputName:"logo",
+            // });
+            custom_funtion()
+        }, 1000);
+    })
+   function closeModal(elem){
+        console.log('modal close')
+       $(".modal-content").empty();
+        $('.modal').modal('hide');
+    }
+
+    function custom_funtion(){
+        $('#demo').steps({
+            onChange: function (event, currentIndex, newIndex){
+                if(currentIndex === 4){
+                    var artwork_type = $("input[name='cus_type']:checked").val();
+                    console.log(artwork_type)
+                    if (artwork_type == 'Logo'){
+                        $(".if_text").css('display','none')
+                        $(".activat").css('display','block')
+                    }else{
+                        $(".activat").css('display','none')
+                        $(".if_text").css('display','block')
+                    }
                 }
-                // return true
+                return true;
+            },
+            onFinish: function() {
+                let _token   = '{{csrf_token()}}';
+                var data = new FormData($('.customization_form')[0]);
+                data.append('_token',_token)
+                $.ajax({
+                    url: '{{route('addCustomization')}}',
+                    type: 'POST',
+                    data:  data,
+                    contentType: false,
+                    cache: false,
+                    processData:false,
+                    beforeSend : function() {
+                        $("#err").fadeOut();
+                    },
+                    success: function(data) {
+                        console.log(data)
+                    },
+                    error: function(e) {
+                        $("#err").html(e).fadeIn();
+                    }
+                });
+            },
+            labels: {
+                current: "current step:",
+                pagination: "Pagination",
+                finish: "Confirm",
+                next: "Next",
+                previous: "Previous",
+                loading: "Loading ..."
             }
-            return true;
-        },
-        onFinish: function() {
-            alert('Wizard2 Completed');
-        },
-        labels: {
-            current: "current step:",
-            pagination: "Pagination",
-            finish: "Confirm",
-            next: "Next",
-            previous: "Previous",
-            loading: "Loading ..."
-        }
-    });
-
-    $("[name='text_one'],[name='text_two'],[name='text_three']").on('input',function (e){
-        if (this.name === 'text_one')
-            $(".one").html(this.value)
-        else if(this.name === 'text_two')
-            $(".two").html(this.value)
-        else if(this.name === 'text_three')
-            $(".three").html(this.value)
-    })
-    $("[name='colours'],[name='fonts']").on('change',function (e){
-
-        if (this.name === 'colours')
-            $(".one,.two,.three").css("color",this.value)
-        if (this.name === 'fonts')
-            $(".one,.two,.three").css("font-family",this.value)
-    })
-</script>
-
-<script>
-    // Add active class to the current button (highlight it)
-    var header = document.getElementById("activate5");
-    var btns = header.getElementsByClassName("currrent5");
-    for (var i = 0; i < btns.length; i++) {
-        btns[i].addEventListener("click", function() {
-            var current = document.getElementsByClassName("active25");
-            current[0].className = current[0].className.replace(" active25", "");
-            this.className += " active25";
         });
-    }
-</script>
 
-<script>
-    // Add active class to the current button (highlight it)
-    // var header = document.getElementById("activate");
-    // var btns = header.getElementsByClassName("currrent");
-    // for (var i = 0; i < btns.length; i++) {
-    //     btns[i].addEventListener("click", function() {
-    //         var current = document.getElementsByClassName("active2");
-    //         current[0].className = current[0].className.replace(" active2", "");
-    //         this.className += " active2";
-    //     });
-    // }
-</script>
+        $("[name='text_one'],[name='text_two'],[name='text_three']").on('input',function (e){
+            if (this.name === 'text_one')
+                $(".one").html(this.value)
+            else if(this.name === 'text_two')
+                $(".two").html(this.value)
+            else if(this.name === 'text_three')
+                $(".three").html(this.value)
+        })
+        $("[name='colour'],[name='font']").on('change',function (e){
+            if (this.name === 'colour')
+                $(".one,.two,.three").css("color",this.value)
+            if (this.name === 'font')
+                $(".one,.two,.three").css("font-family",this.value)
+        })
+        $(".add_cs").on('click',function (e){
+            let itemCode= $(this).attr('data-item');
+            $("[name='item_code']").val(itemCode)
+            $("#exampleModal").modal('show');
+        })
 
 
-<script>
-    // Add active class to the current button (highlight it)
-    var header = document.getElementById("activates");
-    var btns = header.getElementsByClassName("currrent1");
-    for (var i = 0; i < btns.length; i++) {
-        btns[i].addEventListener("click", function() {
-            if ($(this).find('input').attr('checked') === 'checked'){
-                $(this).find('input').attr('checked',false)
-            }else{
-                $(this).find('input').attr('checked',true)
+
+
+
+        var header1 = document.getElementById("activate5");
+        var btns1 = header1.getElementsByClassName("currrent5");
+        for (var i1 = 0; i1 < btns1.length; i1++) {
+            btns1[i1].addEventListener("click", function() {
+                var current = document.getElementsByClassName("active25");
+                current[0].className = current[0].className.replace(" active25", "");
+                this.className += " active25";
+            });
+        }
+
+        // Add active class to the current button (highlight it)
+        var header2 = document.getElementById("activates");
+        var btns2 = header2.getElementsByClassName("currrent1");
+        for (var i2 = 0; i2 < btns2.length; i2++) {
+            btns2[i2].addEventListener("click", function() {
+                var current = document.getElementsByClassName("active21");
+                current[0].className = current[0].className.replace(" active21", "");
+                this.className += " active21";
+            });
+        }
+
+        // Add active class to the current button (highlight it)
+        var header3 = document.getElementById("activat");
+        var btns3 = header3.getElementsByClassName("currrent2");
+        for (var i3 = 0; i3 < btns3.length; i3++) {
+            btns3[i3].addEventListener("click", function() {
+                var current = document.getElementsByClassName("active22");
+                current[0].className = current[0].className.replace(" active22", "");
+                this.className += " active22";
+            });
+        }
+
+        // image gallery
+        // init the state from the input
+        $(".image-checkbox").each(function () {
+            if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
+                $(this).addClass('image-checkbox-checked');
             }
-            var current = document.getElementsByClassName("active21");
-            current[0].className = current[0].className.replace(" active21", "");
-            this.className += " active21";
+            else {
+                $(this).removeClass('image-checkbox-checked');
+            }
         });
-    }
-</script>
 
-<script>
-    // Add active class to the current button (highlight it)
-    var header = document.getElementById("activat");
-    var btns = header.getElementsByClassName("currrent2");
-    for (var i = 0; i < btns.length; i++) {
-        btns[i].addEventListener("click", function() {
-            var current = document.getElementsByClassName("active22");
-            current[0].className = current[0].className.replace(" active22", "");
-            this.className += " active22";
+        // sync the state to the input
+        $(".image-checkbox").on("click", function (e) {
+            $(this).toggleClass('image-checkbox-checked');
+            var $checkbox = $(this).find('input[type="checkbox"]');
+            $checkbox.prop("checked",!$checkbox.prop("checked"))
+            e.preventDefault();
         });
+
+
+        // $('.input-images').imageUploader({
+        //     extensions: ['.ai'],
+        //     imagesInputName:"logo",
+        // });
     }
 
-    // image gallery
-    // init the state from the input
-    $(".image-checkbox").each(function () {
-        if ($(this).find('input[type="checkbox"]').first().attr("checked")) {
-            $(this).addClass('image-checkbox-checked');
-        }
-        else {
-            $(this).removeClass('image-checkbox-checked');
-        }
-    });
-
-    // sync the state to the input
-    $(".image-checkbox").on("click", function (e) {
-        $(this).toggleClass('image-checkbox-checked');
-        var $checkbox = $(this).find('input[type="checkbox"]');
-        $checkbox.prop("checked",!$checkbox.prop("checked"))
-
-        e.preventDefault();
-    });
 </script>
-
-<script>
-    $('.input-images').imageUploader();
-</script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <script src="{{ asset('public/assets/jquery-steps/dist/jquery-steps.js')}}"></script>

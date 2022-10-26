@@ -79,6 +79,7 @@ class WebController extends Controller
         if ($supplierType === "ralawise") {
             $singleProduct = DB::table('product_styles')
                 ->join('product_sizes', 'product_styles.code', '=', 'product_sizes.product_style_code')
+//                ->join('product_size_conversions', 'product_size_conversions.product_size_code', '=', 'product_sizes.code')
                 ->join('product_images', 'product_styles.code', '=', 'product_images.product_style_code')
                 ->select('product_styles.*', 'product_sizes.single_list_price', 'product_images.image_url')
                 ->where('product_styles.code', $productID)->groupBy('product_styles.code')->get()->first();
@@ -88,7 +89,12 @@ class WebController extends Controller
 
             $singleProduct->material = DB::table('product_colourways')->where('product_style_code', $productID)->groupBy('product_style_code')->get();
             $singleProduct->sizes = DB::table('product_sizes')->where('product_style_code', $productID)->groupBy('code')->get();
+            foreach ($singleProduct->sizes as $k=>$sizeGuides){
+                $singleProduct->sizes[$k]->size_conversion = DB::table('product_size_conversions')->where('product_style_code', $sizeGuides->product_style_code)->where('product_size_code',$sizeGuides->code)->get();
+            }
+
             $singleProduct->colors = DB::table('product_swatches')->where('product_style_code', $productID)->get();
+
             $singleProduct->images = DB::table('product_images')->where('product_style_code', $productID)->groupBy('product_colourway_code')->get();
 
             return view('web.single-product-ralawise', compact('singleProduct'));

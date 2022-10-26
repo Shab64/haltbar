@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 
-    <title>Haltbar </title>
+    <title>Haltbar</title>
     <meta name="keywords" content="apparel, catalog, clean, ecommerce, ecommerce HTML, electronics, fashion, html eCommerce, html store, minimal, multipurpose, multipurpose ecommerce, online store, responsive ecommerce template, shops" />
     <meta name="description" content="Best ecommerce html template for single and multi vendor store.">
     <meta name="author" content="">
@@ -40,11 +38,9 @@
     <link rel="stylesheet" id="bg-switcher-css" href="{{ asset('public/assets/web/css/backgrounds/bg-4.css')}}">
 
     <script src="{{ asset('public/assets/web/js/vendor/jquery-3.5.1.min.js') }}"></script>
-
 </head>
 
-
-
+<?php //$s =session('cart'); var_dump($s);die; ?>
 <body>
     <!-- <div id="ec-overlay"><span class="loader_img"></span></div> -->
 
@@ -78,13 +74,13 @@
                     <div class="col header-top-right d-none d-lg-block">
                         <div class="header-top-lan-curr d-flex justify-content-end">
                             <!-- Currency Start -->
-                            <div class="header-top-curr dropdown">
-                                <button class="dropdown-toggle text-upper" data-bs-toggle="dropdown">Currency <i class="ecicon eci-caret-down" aria-hidden="true"></i></button>
-                                <ul class="dropdown-menu">
-                                    <li class="active"><a class="dropdown-item" href="#">USD $</a></li>
-                                    <li><a class="dropdown-item" href="#">EUR €</a></li>
-                                </ul>
-                            </div>
+{{--                            <div class="header-top-curr dropdown">--}}
+{{--                                <button class="dropdown-toggle text-upper" data-bs-toggle="dropdown">Currency <i class="ecicon eci-caret-down" aria-hidden="true"></i></button>--}}
+{{--                                <ul class="dropdown-menu">--}}
+{{--                                    <li class="active"><a class="dropdown-item" href="#">USD $</a></li>--}}
+{{--                                    <li><a class="dropdown-item" href="#">EUR €</a></li>--}}
+{{--                                </ul>--}}
+{{--                            </div>--}}
                             <!-- Currency End -->
                             <!-- Language Start -->
 
@@ -100,9 +96,12 @@
                             <div class="ec-header-user dropdown">
                                 <button class="dropdown-toggle" data-bs-toggle="dropdown"><img src="{{ asset('public/assets/web/images/icons/user.svg')}}" class="svg_img header_svg" alt="" /></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
+                                    @if(empty(auth()->user()))
                                     <li><a class="dropdown-item" href="{{route('register')}}">Register</a></li>
-                                    <li><a class="dropdown-item" href="#">Checkout</a></li>
                                     <li><a class="dropdown-item" href="#">Login</a></li>
+                                    @else
+                                        <li><a class="dropdown-item" href="javascript:void(0)">{{auth()->user()->name}}</a></li>
+                                    @endif
                                 </ul>
                             </div>
                             <!-- Header User End -->
@@ -163,9 +162,14 @@
                                 <div class="ec-header-user dropdown">
                                     <button class="dropdown-toggle" data-bs-toggle="dropdown"><img src="{{ asset('public/assets/web/images/icons/user.svg') }}" class="svg_img header_svg" alt="" /></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
-                                        <li><a class="dropdown-item" href="register.php">Register</a></li>
-                                        <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                                        <li><a class="dropdown-item" href="login.php">Login</a></li>
+                                        @if(empty(auth()->user()))
+                                            <li><a class="dropdown-item" href="{{route('register')}}">Register</a></li>
+                                            <li><a class="dropdown-item" href="#">Login</a></li>
+                                        @else
+                                            <li><a class="dropdown-item" href="javascript:void(0)">{{auth()->user()->name}}</a></li>
+                                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                                            <li><a class="dropdown-item" href="{{route('logout')}}">Logout</a></li>
+                                        @endif
                                     </ul>
                                 </div>
 
@@ -684,13 +688,13 @@
                         <!-- Language Start -->
                         <!-- Language End -->
                         <!-- Currency Start -->
-                        <div class="header-top-curr dropdown">
-                            <button class="dropdown-toggle text-upper" data-bs-toggle="dropdown">Currency <i class="ecicon eci-caret-down" aria-hidden="true"></i></button>
-                            <ul class="dropdown-menu">
-                                <li class="active"><a class="dropdown-item" href="#">USD $</a></li>
-                                <li><a class="dropdown-item" href="#">EUR €</a></li>
-                            </ul>
-                        </div>
+{{--                        <div class="header-top-curr dropdown">--}}
+{{--                            <button class="dropdown-toggle text-upper" data-bs-toggle="dropdown">Currency <i class="ecicon eci-caret-down" aria-hidden="true"></i></button>--}}
+{{--                            <ul class="dropdown-menu">--}}
+{{--                                <li class="active"><a class="dropdown-item" href="#">USD $</a></li>--}}
+{{--                                <li><a class="dropdown-item" href="#">EUR €</a></li>--}}
+{{--                            </ul>--}}
+{{--                        </div>--}}
                         <!-- Currency End -->
                     </div>
                     <!-- Social Start -->
@@ -726,10 +730,8 @@
                     <?php $sub_total = 0 ?>
                     <?php $vat = 0 ?>
                     <?php $total = 0 ?>
-
                     @if (session('cart'))
                     @foreach (session('cart') as $k=>$product)
-
                     <?php $sub_total += $product['item_total'] ?>
                     <?php $vat = $sub_total / 100 * 20; ?>
                     <?php $total = $sub_total + $vat ?>
@@ -775,7 +777,7 @@
                     </table>
                 </div>
                 <div class="cart_btn">
-                    <a href="cart.php" class="btn btn-primary">View Cart</a>
+                    <a href="{{url('cart')}}" class="btn btn-primary">View Cart</a>
                     <a href="checkout.php" class="btn btn-secondary">Checkout</a>
                 </div>
             </div>

@@ -113,16 +113,7 @@
                                         </div>
                                     </div>
                                     <div class="ec-pro-variation">
-                                        <!-- <div class="ec-pro-variation-inner ec-pro-variation-size">
-                                            <span>SIZE</span>
-                                            <div class="">
-                                                <ul class='cl'>
-                                                    <li onclick="activeList('first')" class="first active"> <span>7</span></li>
-                                                    <li onclick="activeList('second')" class='second'><span>8</span></li>
-                                                    <li onclick="activeList('third')" class='third'><span>9</span></li>
-                                                </ul>
-                                            </div>
-                                        </div> -->
+
                                         <div class="ec-pro-variation-inner ec-pro-variation-color">
                                             <span>Choose colour:</span>
                                             <div class="ec-pro-variation-content">
@@ -160,87 +151,7 @@
                                         </div>
 
                                         <div id="customization-container">
-                                            <!-- <div class="slider4">
-                                                <div class="slide4">
-                                                    <h2>CUSTOMISATION 1 - <span>ANY NAME</span></h2>
-                                                    <div class="icon-action">
-                                                        <span data-label="Remove" class="ec-cart-pro-remove"><a href="#"><i class="ecicon eci-edit"></i>&nbsp;edit</a>
-                                                        </span>
-                                                        <span data-label="Remove" class="ec-cart-pro-remove"><a href="#"><i class="ecicon eci-trash-o"></i>&nbsp;Delete</a>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="cpc_row cpc_detail">
-                                                    <div class="cpc_desc">
-                                                        <div class="cpc_desc_col">
-                                                            <h3>TYPE OF CUSTOMISATION:</h3>
-                                                            <span>Print</span>
 
-                                                        </div>
-                                                        <div class="cpc_desc_col">
-                                                            <h3>TEXT CREATOR:</h3>
-                                                            <span>Line 1: Fahad Ayaz</span>
-
-                                                        </div>
-                                                        <div class="cpc_desc_col">
-                                                            <h3>DESIGN POSITION:</h3>
-                                                            <span>Centre Front</span>
-
-                                                        </div>
-                                                        <div class="cpc_desc_col">
-                                                            <h3>DESIGN WIDTH:</h3>
-                                                            <span>10 cm</span>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="cpc_preview">
-                                                        <div class="label">Text Preview</div>
-                                                        <div class="PTRed large"></div>
-
-                                                    </div>
-                                                </div>
-                                            </div> -->
-                                            <!-- <div class="slider4">
-                                                <div class="slide4">
-                                                    <h2>CUSTOMISATION 1 - <span>ANY NAME</span></h2>
-                                                    <div class="icon-action">
-                                                        <span data-label="Remove" class="ec-cart-pro-remove"><a href="#"><i class="ecicon eci-edit"></i>&nbsp;edit</a>
-                                                        </span>
-                                                        <span data-label="Remove" class="ec-cart-pro-remove"><a href="#"><i class="ecicon eci-trash-o"></i>&nbsp;Delete</a>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="cpc_row cpc_detail">
-                                                    <div class="cpc_desc">
-                                                        <div class="cpc_desc_col">
-                                                            <h3>TYPE OF CUSTOMISATION:</h3>
-                                                            <span>Print</span>
-
-                                                        </div>
-                                                        <div class="cpc_desc_col">
-                                                            <h3>UPLOADED ARTWORK:</h3>
-                                                            <span>Line 1: Fahad Ayaz</span>
-
-                                                        </div>
-                                                        <div class="cpc_desc_col">
-                                                            <h3>DESIGN POSITION:</h3>
-                                                            <span>Centre Front</span>
-
-                                                        </div>
-                                                        <div class="cpc_desc_col">
-                                                            <h3>DESIGN WIDTH:</h3>
-                                                            <span>10 cm</span>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="cpc_preview">
-                                                        <div class="label">Image Preview</div>
-                                                        <div class="PTRed large">
-                                                            <img src="{{ asset('public/assets/images/news/img-news-1.jpg') }}" width="100%" height="100%"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> -->
                                         </div>
 
                                         <div id="customizationContainer">
@@ -697,7 +608,50 @@
                         </div>
                     </div>
                 </div>
+                <div class="container mt-5">
+                    <div class="row">
+                        <h4><strong>Size Guide</strong></h4>
+                        <div class="col-md-6">
+                            <table class="scrollable__element table table--product-details-sizes box-shadow border">
+                                <tbody>
 
+                                <tr>
+                                    <th class="align-left">Size</th>
+                                    @if(!empty($singleProduct->sizes))
+                                        @foreach($singleProduct->sizes as $k=>$size)
+                                            <th class="align-left">{{$size->code}}</th>
+                                        @endforeach
+                                    @endif
+
+                                </tr>
+                                <tr>
+                                    <td class="align-left">{{$singleProduct->sizes[0]->size_conversion[0]->title}}:</td>
+                                    @if(!empty($singleProduct->sizes))
+                                        @foreach($singleProduct->sizes as $k=>$size)
+                                            <td>{{$size->size_conversion[0]->product_size_code}}</td>
+                                        @endforeach
+                                    @endif
+                                </tr>
+
+
+
+                                <tr>
+                                    <td class="align-left">{{$singleProduct->sizes[0]->size_conversion[1]->title}}:</td>
+                                    @if(!empty($singleProduct->sizes))
+                                        @foreach($singleProduct->sizes as $k=>$size)
+                                            <td>{{$size->size_conversion[1]->body}}</td>
+                                        @endforeach
+                                    @endif
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
                 <!--Single product content End -->
                 <!-- Single product tab start -->
                 <div class="ec-single-pro-tab">
@@ -890,7 +844,7 @@
                                 <a href="#" class="cart_pro_title">${ value.product_name }</a>
                                 <span class="cart-price">${ value.color }/${ value.size }</span>
                                 <span class="cart-price"><span>$${ value.item_total.toFixed(2) }</span> x ${ value.qty }</span>
-                                
+
                                 <input type="number" name="ec_qtybtn" data-productID="${index}" value="${ value.qty }" min="1" max="249" class="form-control form-control-sm col-sm-4" oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"/>
 
                                 <button class="remove remove_product" data-id="${index}">×</button>

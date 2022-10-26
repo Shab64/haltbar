@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Altur</title>
+    <title>Haltbar | Register</title>
     <link rel="shortcut icon" type="image/png" href="{{url('assets')}}/images/favicon.png" />
     <link href="{{url('public/assets')}}/css/login.css" rel="stylesheet">
 </head>
@@ -23,9 +23,6 @@
         background: linear-gradient(to right, #D1A94D, #CC9E36, #C69320);
 
     }
-
-
-
     @media (min-width: 769px) {
         .gradient-custom-2 {
             border-top-right-radius: .3rem;
@@ -34,13 +31,13 @@
     }
 
     .btn-primary {
-        border-color: #11D5FF !important;
-        background-color: #11D5FF !important;
+        border-color: #6e6e6e !important;
+        background-color: #6e6e6e !important;
     }
 
     .btn-primary:hover {
-        border-color: #11D5FF !important;
-        background-color: #11D5FF !important;
+        border-color: #6e6e6e !important;
+        background-color: #6e6e6e !important;
     }
 
 

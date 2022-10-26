@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CouponsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\CMSController;
 use App\Http\Controllers\CartController;
+//use App\Http\Controllers\CouponsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WebController;
@@ -58,11 +60,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         //CMS route
         Route::post('/cms/add/{type}', [CMSController::class, 'add'])->name('add');
+
+//        Coupons
+        Route::post('/admin/add_coupons', [CouponsController::class, 'store'])->name('addCoupons');
+        Route::get('/admin/coupons', [CouponsController::class, 'index'])->name('coupons');
+        Route::post('/admin/update_status', [CouponsController::class, 'update'])->name('updateStatus');
     });
 });
 
 //cart
 Route::get('/cart', [CartController::class, 'index'])->name('view_cart');
+Route::post('/customization', [CartController::class, 'customization_modal'])->name('user.showCustomization');
 
 Route::get('/', [WebController::class, 'index'])->name('index');
 Route::post('/filter', [WebController::class, 'filter'])->name('filter');
@@ -85,6 +93,9 @@ Route::get('/product_filter', [ProductController::class, 'productSideFilter'])->
 //search
 Route::get('/searchresults', [ProductController::class, 'filter_search'])->name('search_products');
 Route::get('/products', [ProductController::class, 'index'])->name('products');
+
+//ad customization
+Route::post('/add_customization', [CartController::class, 'add_customization'])->name('addCustomization');
 
 //bulk csv upload for ralawise
 Route::get('/upload_csv_in_chunks', function () {
@@ -166,3 +177,7 @@ Route::post('admin/terms-condition/add', [CMSController::class, 'storeTermsCondi
 Route::post('admin/terms-condition/update', [CMSController::class, 'updateTermsCondition'])->name('updateTermsCondition');
 Auth::Routes();
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

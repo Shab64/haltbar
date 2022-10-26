@@ -34,32 +34,28 @@
                 <div class="card user-profile-list">
                     <div class="card-body">
                         <div class="dt-responsive table-responsive">
-                            <table id="user-list-table" class="table nowrap">
+                            <table id="user-list-table" class="table nowrap" >
                                 <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
                                     <th>Start date</th>
                                     <th>Status</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                @if(!$all_users->isEmpty())
+                                    @foreach($all_users as $u)
                                 <tr>
                                     <td>
                                         <div class="d-inline-block align-middle">
-                                            <img src="assets/images/user/avatar-1.jpg" alt="user image" class="img-radius align-top m-r-15" style="width:40px;">
+                                            <i class="fa fa-user" style="font-size: 37px;padding: 10px"></i>
                                             <div class="d-inline-block">
-                                                <h6 class="m-b-0">Quinn Flynn</h6>
-                                                <p class="m-b-0">Qf@domain.com</p>
+                                                <h6 class="m-b-0">{{$u->name}}</h6>
+                                                <p class="m-b-0">{{$u->email}}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>Support </td>
-                                    <td>Edinburgh</td>
-                                    <td>61</td>
-                                    <td>2011/04/25</td>
+                                    <td>{{$u->created_at}}</td>
                                     <td>
                                         <span class="badge badge-light-success">Active</span>
                                         <div class="overlay-edit">
@@ -68,50 +64,8 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-inline-block align-middle">
-                                            <img src="assets/images/user/avatar-2.jpg" alt="user image" class="img-radius align-top m-r-15" style="width:40px;">
-                                            <div class="d-inline-block">
-                                                <h6 class="m-b-0">Garrett Winters</h6>
-                                                <p class="m-b-0">gw@domain.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Seller</td>
-                                    <td>Tokyo</td>
-                                    <td>63</td>
-                                    <td>2011/07/25</td>
-                                    <td>
-                                        <span class="badge badge-light-danger">Disabled</span>
-                                        <div class="overlay-edit">
-                                            <button type="button" class="btn btn-icon btn-success"><i class="feather icon-check-circle"></i></button>
-                                            <button type="button" class="btn btn-icon btn-danger"><i class="feather icon-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-inline-block align-middle">
-                                            <img src="assets/images/user/avatar-3.jpg" alt="user image" class="img-radius align-top m-r-15" style="width:40px;">
-                                            <div class="d-inline-block">
-                                                <h6 class="m-b-0">Ashton Cox</h6>
-                                                <p class="m-b-0">ac@domain.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Seller</td>
-                                    <td>San Francisco</td>
-                                    <td>66</td>
-                                    <td>2009/01/12</td>
-                                    <td>
-                                        <span class="badge badge-light-danger">Disabled</span>
-                                        <div class="overlay-edit">
-                                            <button type="button" class="btn btn-icon btn-success"><i class="feather icon-check-circle"></i></button>
-                                            <button type="button" class="btn btn-icon btn-danger"><i class="feather icon-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    @endforeach
+                                @endif
 
                                 </tbody>
 

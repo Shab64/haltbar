@@ -11,6 +11,7 @@ use App\Models\RalawisePricing;
 use App\Models\Slider;
 use App\Models\Uneek;
 use App\Models\UneekPricing;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +59,7 @@ class AdminController extends Controller
             $u = Uneek::paginate(15)->withQueryString();
             $data['uneek'] = $u;
         }
+        $data['all_users'] =User::all();
         $data['all_sliders'] = Slider::all();
 
         return view('admin.' . $page, $data);

@@ -124,7 +124,7 @@
 						<a href="{{ Route('admin.view.page',['order']) }}" class="pc-link "><span class="pc-micon"><i class="fa fa-dollar-sign"></i></span><span class="pc-mtext">Orders</span></a>
 					</li>
 					<li class="pc-item">
-						<a href="{{ Route('admin.view.page',['coupons']) }}" class="pc-link "><span class="pc-micon"><i class="fa fa-dollar-sign"></i></span><span class="pc-mtext">Coupons</span></a>
+						<a href="{{ Route('admin.coupons') }}" class="pc-link "><span class="pc-micon"><i class="fa fa-dollar-sign"></i></span><span class="pc-mtext">Coupons</span></a>
 					</li>
                     <li class="pc-item text-center text-white"><span>Website Content Edit</span></li>
                     <li class="pc-item">
@@ -290,7 +290,7 @@
 						<a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
 							<img src="{{ asset('public/assets/images/user/avatar-2.jpg')}}" alt="user-image" class="user-avtar">
 							<span>
-								<span class="user-name">Joseph William</span>
+								<span class="user-name">{{auth()->user()->name}}</span>
 								<span class="user-desc">Administrator</span>
 							</span>
 						</a>
